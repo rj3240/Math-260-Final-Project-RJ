@@ -42,8 +42,6 @@ def anneal(data, T, rate, iterations):
     for i in range(iterations):
         newGuess = pathGenerator(currentGuess)
         newDistance,newDistanceVec = distanceCalc(newGuess)
-        print("currentdist:",currentDistance)
-        print("newdist:",newDistance)
         if newDistance < currentDistance or random.random() < math.exp((currentDistance - newDistance)/T):
             currentGuess = newGuess
             currentDistance = newDistance
