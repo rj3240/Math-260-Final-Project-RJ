@@ -55,10 +55,18 @@ def anneal(data, T, rate, iterations):
 
     return bestGuess, bestDistance, bestDistancePerIter
 
+def grapher(data,lineOpacity):
+    x = data[:,0]
+    y = data[:,1]
+    plt.plot(x,y,alpha = lineOpacity)
+    plt.scatter(x,y, marker = "o")
+    plt.show()
+
 if __name__ == "__main__":
 
     testData = np.array([[0,100],[100,0],[-100,0],[0,-100],[0,200],[200,0],[-200,0],[0,-200],[0,300],[300,0],[-300,0],[0,-300]])
-    bestPath, distance,bestDistancePerRun = anneal(testData, 1000, 0.95, 100)
+    bestPath, distance,bestDistancePerRun = anneal(testData, 1000, 0.95, 100000)
+    grapher(bestPath, 1)
     plt.plot(bestDistancePerRun)
     plt.show()
 
