@@ -3,31 +3,20 @@ import random
 import math
 import matplotlib.pyplot as plt
 
-testData = np.array([[0,100],[100,0],[-100,0],[0,-100]])
+testData = np.array([[0,100],[100,0],[-100,0],[0,-100],[0,200],[200,0],[-200,0],[0,-200],[0,300],[300,0],[-300,0],[0,-300] ])
 x = testData[:,0]
 y = testData[:,1]
-#plt.scatter(x,y)
-#plt.show()
+plt.plot(x,y)
+plt.show()
 
-def pathGenerator(dataInput):
-    
-    path = np.copy(dataInput)
-    n = len(path)
-
-    pivot1 = random.randint(0,n-1)
-    secondPivotSelect = False
-    
-    while secondPivotSelect == False:
-        pivot2 = random.randint(0,n-1)
-        if pivot2 != pivot1:
-            secondPivotSelect = True
-
-    path[pivot1,:], path[pivot2,:] = path[pivot2,:], path[pivot1,:]
-
-    return path
+def pathGenerator(oldPath): #Returns an np array of values that correspond to index locations of each coordinate point 
+    n = len(oldPath)
+    newPath = np.copy(oldPath)
+    pivot1, pivot2 = np.random.choice(n, size=2, replace=False)
+    newPath[[pivot1, pivot2]] = newPath[[pivot2, pivot1]]
+    return newPath
 
 def distanceCalc(path):
-
     n = len(path)
     distanceVector = np.zeros(n)
 
@@ -37,18 +26,45 @@ def distanceCalc(path):
         distanceVector[i] = np.linalg.norm(a-b) #Determining distance between two cities
 
     distanceVector[n-1] = np.linalg.norm(path[-1,:]-path[0,:]) #Filling in the return value to the start line
-    distance = np.linalg.norm(distanceVector)
+    distance = np.linalg.norm(distanceVector) #Calculating total distance
     return distance, distanceVector
 
 def acceptanceProb(init,new,temp):
 
-    if new > init:
+    if new < init:
         acceptanceProb = 1
     else:
-        acceptanceProb = math.exp((new-init)/temp)
+        acceptanceProb = math.exp((new-init)/temp) #Implementing temperature
     return acceptanceProb 
 
-def simAnneal():
-    print("hello")
-    return simAnneal
+def anneal(data, T, Tmin, rate, iterations):
+    bestDistancePerIter = []
+    coordinates = np.copy(data)
+    currentGuess = pathGenerator(coordinates)
+    currentDistance,currentDistanceVec = distanceCalc(currentGuess)
 
+    bestGuess = np.copy(currentGuess) #Determining a placeholder value for best guess
+    bestDistance, bestDistanceVec = distanceCalc(bestGuess)
+    
+    #Using for loop to go through iterations specified in anneal function:
+    for i in range(iterations):
+        newGuess = pathGenerator(currentGuess)
+        newDistance,newDistanceVec = distanceCalc(newGuess)
+
+        if acceptanceProb(currentDistance, newDistance, T) > random.random():
+            currentGuess = newGuess
+            currentDistance = newDistance
+            if currentDistance > bestDistance:
+                bestDistance = currentDistance
+                bestDistanceVec = currentDistanceVec
+                bestDistancePerIter.append(bestDistance)
+        T = rate * T
+
+    return bestGuess, bestDistance, bestDistancePerIter
+
+bestPath, distance,bestDistancePerRun = anneal(testData, 1,0.1, 0.95, 1000)
+print(pathGuess)
+print(distance)
+
+plt.plot(distanceRun)
+plt.show()
