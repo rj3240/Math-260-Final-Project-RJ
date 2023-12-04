@@ -2,12 +2,12 @@ import numpy as np
 import random
 import math
 import matplotlib.pyplot as plt
-
-testData = np.array([[0,100],[100,0],[-100,0],[0,-100],[0,200],[200,0],[-200,0],[0,-200],[0,300],[300,0],[-300,0],[0,-300] ])
+'''
 x = testData[:,0]
 y = testData[:,1]
 plt.plot(x,y)
 plt.show()
+'''
 
 def pathGenerator(oldPath): #Returns an np array of values that correspond to index locations of each coordinate point 
     n = len(oldPath)
@@ -55,14 +55,11 @@ def anneal(data, T, rate, iterations):
 
     return bestGuess, bestDistance, bestDistancePerIter
 
+if __name__ == "__main__":
 
-testData2 = np.array([[0,1],[0,2],[0,3],[0,4]])
-print(distanceCalc(testData2))
+    testData = np.array([[0,100],[100,0],[-100,0],[0,-100],[0,200],[200,0],[-200,0],[0,-200],[0,300],[300,0],[-300,0],[0,-300]])
+    bestPath, distance,bestDistancePerRun = anneal(testData, 1000, 0.95, 100)
+    plt.plot(bestDistancePerRun)
+    plt.show()
 
-bestPath, distance,bestDistancePerRun = anneal(testData, 1000, 0.95, 100)
-#print(bestPath)
-#print(distance)
-#print(bestDistancePerRun)
-plt.plot(bestDistancePerRun)
-plt.show()
 
