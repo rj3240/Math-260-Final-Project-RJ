@@ -55,6 +55,7 @@ def anneal(data, T, rate, iterations):
 
     return bestGuess, bestDistance, bestDistancePerIter
 
+
 testData2 = np.array([[0,1],[0,2],[0,3],[0,4]])
 print(distanceCalc(testData2))
 
