@@ -26,18 +26,10 @@ def distanceCalc(path):
         distanceVector[i] = np.linalg.norm(a-b) #Determining distance between two cities
 
     distanceVector[n-1] = np.linalg.norm(path[-1,:]-path[0,:]) #Filling in the return value to the start line
-    distance = np.linalg.norm(distanceVector) #Calculating total distance
+    distance = np.sum(distanceVector) #Calculating total distance
     return distance, distanceVector
 
-def acceptanceProb(init,new,temp):
-
-    if new < init:
-        acceptanceProb = 1
-    else:
-        acceptanceProb = math.exp((new-init)/temp) #Implementing temperature
-    return acceptanceProb 
-
-def anneal(data, T, Tmin, rate, iterations):
+def anneal(data, T, rate, iterations):
     bestDistancePerIter = []
     coordinates = np.copy(data)
     currentGuess = pathGenerator(coordinates)
@@ -50,21 +42,28 @@ def anneal(data, T, Tmin, rate, iterations):
     for i in range(iterations):
         newGuess = pathGenerator(currentGuess)
         newDistance,newDistanceVec = distanceCalc(newGuess)
-
-        if acceptanceProb(currentDistance, newDistance, T) > random.random():
+        print("currentdist:",currentDistance)
+        print("newdist:",newDistance)
+        if newDistance < currentDistance or random.random() < math.exp((currentDistance - newDistance)/T):
             currentGuess = newGuess
             currentDistance = newDistance
-            if currentDistance > bestDistance:
+            if currentDistance < bestDistance:
                 bestDistance = currentDistance
                 bestDistanceVec = currentDistanceVec
-                bestDistancePerIter.append(bestDistance)
+        bestDistancePerIter.append(bestDistance)
+        
         T = rate * T
+        print(T)
 
     return bestGuess, bestDistance, bestDistancePerIter
 
-bestPath, distance,bestDistancePerRun = anneal(testData, 1,0.1, 0.95, 1000)
-print(pathGuess)
-print(distance)
+testData2 = np.array([[0,1],[0,2],[0,3],[0,4]])
+print(distanceCalc(testData2))
 
-plt.plot(distanceRun)
+bestPath, distance,bestDistancePerRun = anneal(testData, 1000, 0.95, 100)
+#print(bestPath)
+#print(distance)
+#print(bestDistancePerRun)
+plt.plot(bestDistancePerRun)
 plt.show()
+
