@@ -18,6 +18,13 @@ def pathGenerator(oldPath): #Returns an np array of values that correspond to in
     newPath[[pivot1, pivot2]] = newPath[[pivot2, pivot1]]
     return newPath
 
+def latLongCalc(coord1,coord2): #coordinate is a (,2) dimension np array. Everything is in miles
+    delta = coord2 - coord1
+    deltLatit = delta[0] * 69 #conversion to miles
+    deltLong = delta[1] * 54.6 #conversion to miles
+    deltaMiles = np.sqrt(deltLatit ** 2 + deltLong ** 2)
+    return deltaMiles
+
 def distanceCalc(path):
     n = len(path)
     distanceVector = np.zeros(n)
@@ -25,13 +32,30 @@ def distanceCalc(path):
     for i in range(0,n-1):
         a = path[i,:]
         b = path[i+1,:]
-        distanceVector[i] = np.linalg.norm(a-b) #Determining distance between two cities
+        distanceVector[i] = latLongCalc(a,b)
 
-    distanceVector[n-1] = np.linalg.norm(path[-1,:]-path[0,:]) #Filling in the return value to the start line
+    distanceVector[n-1] = latLongCalc(path[-1,:],path[0,:]) #Filling in the return value to the start line
     distance = np.sum(distanceVector) #Calculating total distance
     return distance, distanceVector
 
-def anneal(data, T, rate, iterations):
+def timeCostCalc(data,airCriteria,airSpeed,airCost,carSpeed,carCost):
+    n = len(data)
+    _,distances = distanceCalc(data)
+    timeVector = np.zeros(n)
+    costVector = np.zeros(n)
+    for i in range(0,n-1):
+        if distances[i] > airCriteria:
+            timeVector[i] = distances[i]/airSpeed
+            costVector[i] = distances[i] * airCost
+        else:
+            timeVector[i] = distances[i]/carSpeed
+            costVector[i] = distances[i] * carCost
+    time = np.sum(timeVector)
+    cost = np.sum(costVector)
+    return time,timeVector,cost,costVector
+
+def annealDistance(data, T, rate, iterations):
+
     bestDistancePerIter = []
     coordinates = np.copy(data)
     currentGuess = pathGenerator(coordinates)
@@ -57,15 +81,59 @@ def anneal(data, T, rate, iterations):
 
     return bestGuess, bestDistance, bestDistancePerIter
 
-def grapher(data,lineOpacity):
+def annealTime(data, T, rate, iterations,airSpeed,airCriteria,airCost,carSpeed,carCost):
+
+    bestTimePerIter = []
+    coordinates = np.copy(data)
+    currentGuess = pathGenerator(coordinates)
+    currentTime,currentTimeVec,_,_ = timeCostCalc(currentGuess,airCriteria,airSpeed,airCost,carSpeed,carCost)
+
+    bestGuess = np.copy(currentGuess) #Determining a placeholder value for best guess
+    bestTime, bestTimeVec,_,_ = timeCostCalc(bestGuess,airCriteria,airSpeed,airCost,carSpeed,carCost)
+    
+    #Using for loop to go through iterations specified in anneal function:
+    for i in range(iterations):
+        newGuess = pathGenerator(currentGuess)
+        newTime,newTimeVec,_,_ = timeCostCalc(newGuess,airCriteria,airSpeed,airCost,carSpeed,carCost)
+        if newTime < currentTime or random.random() < math.exp((currentTime - newTime)/T):
+            currentGuess = newGuess
+            currentTime = newTime
+            if newTime < bestTime:
+                bestTime = currentTime
+                bestTimeVec = currentTimeVec
+        bestTimePerIter.append(bestTime)
+        
+        T = rate * T
+        print(T)
+
+    return bestGuess, bestTime, bestTimePerIter
+
+def pathGrapher(data, lineColor):
     x = data[:,0]
     y = data[:,1]
-    plt.plot(x,y,alpha = lineOpacity)
-    plt.scatter(x,y, marker = "o")
-    plt.plot(x[0], y[0], marker = "+")
+    plt.plot(x,y,alpha = 1,color=lineColor)
+    plt.scatter(x,y, marker = "o", color="black", alpha = 1)
+    plt.plot(x[0], y[0], marker = "o", markersize = 20, color="orange")
+    plt.xlabel("Latitude (deg.)")
+    plt.ylabel("Longitude (deg.)")
+    plt.title("Optimal Distance Path")
+
+    # Plot arrows
+    '''
+    for i in range(len(data) - 1):
+        dx = x[i+1]-x[i]
+        dy = y[i+1]-y[i]
+        ax.quiver(x, y, dx, dy, angles='xy', scale_units='xy', scale=0.5, color='red')
+    '''
     plt.show()
 
 if __name__ == "__main__":
+
+    airSpeed = 800 #mph
+    airCriteria = 800 #maximum of 4 hour drive
+    airCost = 0.14 #dollars
+    carSpeed = 70 #mph
+    carCost = 0.29 #dollars
 
     data = np.array([
     (32.377716, -86.300568),
@@ -117,19 +185,21 @@ if __name__ == "__main__":
     (47.035805, -122.905014),
     (38.336246, -81.612328),
     (43.074684, -89.384445),
-    (41.140259, -104.820236)
-]
-)
-    print(data)
+    (41.140259, -104.820236)])
 
-    #coordinates = readData("us-state-capitals.csv")
-    #testData = np.array([[0,100],[100,0],[-100,0],[0,-100],[0,200],[200,0],[-200,0],[0,-200],[0,300],[300,0],[-300,0],[0,-300]])
-    #random_matrix = np.random.rand(2000, 2)
-    bestPath, distance,bestDistancePerRun = anneal(data, 10000, 0.95, 10000)
+    bestPath, distance,bestDistancePerRun = annealDistance(data, 100000, 0.995, 10000)
 
-    grapher(bestPath, 1)
+    bestTimePath, bestTime, bestTimePerIter = annealTime(data, 100000,0.995, 10000, airSpeed, airCriteria, airCost, carSpeed, carCost)
     
-    plt.plot(bestDistancePerRun)
+
+    pathGrapher(bestPath, "red")
+    pathGrapher(bestTimePath, "green")
+    #plt.show()
+
+    plt.plot(bestTimePerIter)
+    plt.xlabel("Iteration Count")
+    plt.ylabel("Total Time (Hr)")
+    plt.title("Simulated Annealing Performance over Iteration")
     plt.show()
 
 
