@@ -14,6 +14,7 @@ OUTPUT
 coordinates: the extracted coordinates of US state capitals, reported in degrees (no directionality)
 """
 
+
 def readData(dataFile):
     dataFile = np.genfromtxt(dataFile, delimiter=",", dtype=None, names=True, encoding=None)
     coordinates = dataFile[['latitude', 'longitude']]
@@ -21,6 +22,26 @@ def readData(dataFile):
     print(np.shape(coord))
     #nameData = dataFile[:,0:1]
     return coordinates
+
+
+def readData(dataFile):
+    headers = ["name","description","latitude","longitude"]
+    dataFile = np.genfromtxt(dataFile, delimiter=",", dtype=None, names=True, encoding=None)
+    data = []
+
+    for label in headers:
+        newColumn = dataFile[[label]]
+        data.append(newColumn)
+
+    #coordinates = dataFile
+    #reshaped = coordinates.reshape((50,2))
+    #print(coordinates)
+    #print(coordinates[0])
+    #print(np.shape(coordinates))
+    return data
+
+coord = readData("us-state-capitals.csv")
+
 
 """
 pathGenerator is used to create a new path between coordinate points from an older path.
@@ -122,9 +143,6 @@ def timeCostCalc(data,airCriteria,airSpeed,airCost,carSpeed,carCost, selector):
             costVector[i] = distances[i] * carCost
     time = np.sum(timeVector) #Calculating the total time required to traverse path by summing up individual time intervals
     cost = np.sum(costVector) #Calculating the total cost required to traverse path by summing up individual cost intervals
-
-    #timeVector[n] = timeVector[0] #In order for the grapher to accurately plot path, the final point needs to be the starting point.
-    #costVector[n] = costVector[0]
 
     if selector == "time":
         return time,timeVector
@@ -266,6 +284,29 @@ def annealCost(data, T, rate, iterations,airSpeed,airCriteria,airCost,carSpeed,c
         T = rate * T
     return bestGuess, bestCost, bestCostPerIter
 
+"""
+annealOptimization is used to conveniently store all optimization features, and determines which one is being called. 
+Multiple parameters are input to determine characteristics of air or land travel.
+
+INPUTS
+data: the path through which the salesman travels, which is a n by 2 numpy array
+T: starting temperature of Simulated Annealing temperature function (exponential decay model)
+rate: rate of temperature decay
+iterations: number of iterations ran by simulated annealing optimization
+airCriteria: maximum distance in miles salesman is willing to drive
+airSpeed: average speed of air travel, measured in mph
+airCost: cost of air travel, measured in dollars per hour
+carSpeed: average speed of car travel, measured in mph
+carCost: cost of car travel, measured in dollars per hour
+optimizationType: used to switch between which values are returned by timeCostCalc
+"time" returns time related information
+"time" returns time related information
+"cost" returns cost related information
+
+OUTPUTS
+return values given by simulated annealing functions
+"""
+
 def annealOptimization(data, T, rate, iterations,airSpeed,airCriteria,airCost,carSpeed,carCost, optimizationType):
     if optimizationType == "distance":
         return annealDistance(data, T, rate, iterations)
@@ -274,24 +315,66 @@ def annealOptimization(data, T, rate, iterations,airSpeed,airCriteria,airCost,ca
     elif optimizationType == "time":
         return annealTime(data, T, rate, iterations,airSpeed,airCriteria,airCost,carSpeed,carCost)
 
-def pathGrapher(data, lineColor):
+"""
+pathGrapher is used to plot optimal path determiend by Simulated Annealing method. 
+Multiple parameters are input to determine visual characteristics.
+
+INPUTS
+data: the path through which the salesman travels, which is a n by 2 numpy array
+lineColor: color of the path line
+title: title of graph, to be displayed using plt.title()
+
+OUTPUTS
+NONE
+"""
+
+def pathGrapher(data, lineColor, title):
     dataLoop = np.vstack((data, data[0,:])) 
     #In order for the path grapher to fully loop back to the initial value, the first row must be copied to the bottom
     x = dataLoop[:,0]
     y = dataLoop[:,1]
     plt.plot(x,y,alpha = 1,color=lineColor)
     plt.scatter(x,y, marker = "o", color="black", alpha = 1)
-    plt.plot(x[0], y[0], marker = "o", color="orange")
+    plt.plot(x[0], y[0], marker = "^", color="orange")
     plt.xlabel("Latitude (deg.)")
     plt.ylabel("Longitude (deg.)")
-    plt.title("Optimal Distance Path")
+    plt.title(title)
     plt.show()
+
+"""
+main function which contains three scenarios, with all values already preset.
+
+SCENARIO 1: City Traveling
+
+This scenario considers the 50 state capitals of the United States. Starting from a random city and given different initial parameters,
+paths that optimize distance, time, and cost are generated and plotted along with the exact order of cities. 
+Furthermore, graphs of best distance, time, and cost are provided for all iterations.
+
+SCENARIO 2: Circle Traveling
+
+This scenario considers travel across a circle. Starting from a random point along the circle, paths that optimize distance, time, and cost 
+are generated and plotted along with the exact order of cities. Furthermore, graphs of best distance, time, and cost are provided for all iterations.
+Compared to SCENARIO 1, SCENARIO 2 exaggerates the effect of which quantity is best optimizes.
+
+SCENARIO 3: Testing Convergence over Iteration Count 
+
+This scenario considers the convergence of the Simulated Annealing algorithm over many iterations.
+
+-----
+
+In order to activate a scenario, set its value below to True
+
+"""
 
 if __name__ == "__main__":
 
+    scenario1 = True
+    scenario2 = True
+    scenario3 = False
+
     T = 10000
-    rate = 0.999
-    iterations = 100
+    rate = 0.95
+    iterations = 20000
 
     #######################################################################################
     #SCENARIO 1: Traveling Salesman Cities: Distance Optimization #########################
@@ -368,7 +451,7 @@ if __name__ == "__main__":
     carCost2 = 3.0 #dollars
 
     radius = 1000
-    points = 3
+    points = 40
     theta = np.linspace(0, 2 * np.pi, points)
     x = radius * np.cos(theta)
     y = radius * np.sin(theta)
@@ -392,21 +475,33 @@ if __name__ == "__main__":
 
     ##########################################
 
-    scenario1 = False
-    scenario2 = False
-    scenario3 = True
     if scenario1:
 
-        bestPath, distance,bestDistancePerRun = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "distance")
+        print("SIMULATION RUNNING")
+
+        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "distance")
         bestTimePath, bestTime, bestTimePerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "time")
         bestCostPath, bestCost, bestCostPerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "cost")
-        print(bestTime)
-        print(bestCost)
+        
+        relPerformDist = bestDistancePerIter/bestDistance
+        relPerformTime = bestTimePerIter/bestTime
+        relPerformCost = bestCostPerIter/bestCost
 
-        pathGrapher(bestPath, "red")
-        pathGrapher(bestTimePath, "green")
-        pathGrapher(bestCostPath, "blue")
-        #plt.show()
+        print("SIMULATION RESULTS:")
+
+        print("Optimal Distance:", bestDistance, "Miles")
+        print("Optimal Time:", bestTime, "Hr")
+        print("Optimal Cost:", bestCost, "USD")
+
+        pathGrapher(bestPath, "red", "Optimal Distance Path")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")
+
+        plt.plot(bestDistancePerIter)
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Total Cost (USD)")
+        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.show()
 
         plt.plot(bestTimePerIter)
         plt.xlabel("Iteration Count")
@@ -419,19 +514,41 @@ if __name__ == "__main__":
         plt.ylabel("Total Cost (USD)")
         plt.title("Simulated Annealing Cost Performance over Iteration")
         plt.show()
+
+        plt.plot(relPerformDist, label = "Distance")
+        plt.plot(relPerformCost, label = "Cost")
+        plt.plot(relPerformTime, label = "Time")
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Relative Performance (%)")
+        plt.title("Relative Performance of Different Optimization Compared to Final Optimal Value")
+        plt.legend()
+        plt.show()        
     
     elif scenario2:
 
-        bestPath, distance,bestDistancePerRun = annealOptimization(data2,T,rate,iterations,airSpeed1, airCriteria2, airCost2, carSpeed2, carCost2, "distance")
-        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data2,T,rate,iterations,airSpeed1, airCriteria2, airCost2, carSpeed2, carCost2, "time")
-        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data2,T,rate,iterations,airSpeed1, airCriteria2, airCost2, carSpeed2, carCost2, "cost")
-        print(bestTime)
-        print(bestCost)
+        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data2,T,rate,iterations,airSpeed2, airCriteria2, airCost2, carSpeed2, carCost2, "distance")
+        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data2,T,rate,iterations,airSpeed2, airCriteria2, airCost2, carSpeed2, carCost2, "time")
+        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data2,T,rate,iterations,airSpeed2, airCriteria2, airCost2, carSpeed2, carCost2, "cost")
+        
+        relPerformDist = bestDistancePerIter/bestDistance
+        relPerformTime = bestTimePerIter/bestTime
+        relPerformCost = bestCostPerIter/bestCost
 
-        pathGrapher(bestPath, "red")
-        pathGrapher(bestTimePath, "green")
-        pathGrapher(bestCostPath, "blue")
-        #plt.show()
+        print("SIMULATION RESULTS:")
+
+        print("Optimal Distance:", bestDistance, "Miles")
+        print("Optimal Time:", bestTime, "Hr")
+        print("Optimal Cost:", bestCost, "USD")
+
+        pathGrapher(bestPath, "red", "Optimal Distance Path")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")
+
+        plt.plot(bestDistancePerIter)
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Total Cost (USD)")
+        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.show()
 
         plt.plot(bestTimePerIter)
         plt.xlabel("Iteration Count")
@@ -445,7 +562,17 @@ if __name__ == "__main__":
         plt.title("Simulated Annealing Cost Performance over Iteration")
         plt.show()
 
+        plt.plot(relPerformDist, label = "Distance")
+        plt.plot(relPerformCost, label = "Cost")
+        plt.plot(relPerformTime, label = "Time")
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Relative Performance (%)")
+        plt.title("Relative Performance of Different Optimization Compared to Final Optimal Value")
+        plt.legend()
+        plt.show()     
+
     elif scenario3:
+
         bestDistancesTotal = np.zeros(len(iterationRange))
         for i in range(0,len(iterationRange)):
             bestPath, bestDistance,bestDistancePerRun = annealOptimization(data1,T,rate,iterationRange[i],airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "distance")
@@ -457,7 +584,3 @@ if __name__ == "__main__":
         plt.ylabel("Best Distance (mi)")
         plt.title("Relationship between Best Distance and Iteration Number")
         plt.show()
-
-
-
-
