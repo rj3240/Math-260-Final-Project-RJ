@@ -9,8 +9,21 @@ While all optimization methods are prone to local extrema, the Simulated Annneal
 
 ### Simulated Annealing: Discrete Problems and the Traveling Salesman 
 
-One optimization problem Simulated Annealing can be used to for great effect is the Traveling Salesman problem. The traveling salesmen problem asks the following question: given N points, what is the shortest route that connects all points and returns to the initial starting point. In the traveling salesmen problem, this question is rephrased into the following: given N cities, what is the shortest route that a traveling salesman can take to go to each city exactly once and return to their original starting city. These cities are represented using coordinates, which allows for optimization in two, three, or n-dimensions.
+One optimization problem Simulated Annealing can be used to great effect is the Traveling Salesman problem. The traveling salesmen problem asks the following question: given N points, what is the shortest route that connects all points and returns to the initial starting point. In the traveling salesmen problem, this question is rephrased into the following: given N cities, what is the shortest route that a traveling salesman can take to go to each city exactly once and return to their original starting city. These cities are represented using coordinates, which allows for optimization in two, three, or n-dimensions.
 
 For this project, I decided to optimize travel routes between the 50 state capitals of the United States. Along with optimizing distance, I also decided to optimize other quantities, such as route's total time along with the route's total cost. These quantities were determined based on the distance between state capitals (which would be converted into required time for travel and cost for travel).
 
-The following code has three scenarios provided. Scenario 1 is the traveling salesman problem solved for the above situation. Scenario 2 is the traveling salesmen problem solved for a distribution of points in a circle. This scenario is useful in showcasing how adjustment of cost and time parameters can result in drastically different optimal routes, which is somewhat hard to see with scenario 1. Scenario 3 tests the convergence of optimal solutions as iteration number increases. 
+### Simulated Annealing: Use Instructions and Notes
+
+The following code has three scenarios provided. Scenario 1 is the traveling salesman problem solved for the above situation. Scenario 2 tests the convergence of optimal solutions as iteration number increases. Scenario 3 is the traveling salesmen problem solved for a distribution of points in a circle. This scenario is useful in showcasing how adjustment of cost and time parameters can result in drastically different optimal routes, which is somewhat hard to see with scenario 1. Scenario 4 showcases the performance of simulated annealing models for large number of points, solving the traveling salesman problem for a set of 500 points randomly distributed in a 10000 by 10000 square.   
+
+Each scenario has its own set of parameters that can be separately adjusted per scenario. Placeholder values have already been added in the code file, and can be changed based on the user's specifications. On the other hand, parameters controlling iteration, temperature, and temperature rate are global across all scenarios. They should be changed depending on which scenario is active. Below are some useful tips:
+
+1. If running scenario 1, a good iteration number to use is around 30000. If a lower iteration number is used (such as 10000), the optimization is more likely to be caught in a local extrema point.
+1. If running scenario 4, ensure that the temperature is around 10000000, rate is around 0.995, and the iteration number is low (approx. 20000). Otherwise, the program will take a significantly long time to finish running.
+1. Generally, if one runs a higher iteration number, temperature or rate should also increase. This is to prevent any possibility of the temperature becoming so low that a floating point error emerges.
+
+Everytime a scenario runs, a matplotlib window will open and plot the results of the scenario. If you cannot see these results, a folder of all plots is provided in the github repository.
+
+### Citations:
+
