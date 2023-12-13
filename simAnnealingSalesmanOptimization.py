@@ -315,6 +315,7 @@ def pathGrapher(data, lineColor, title):
     plt.ylabel("Longitude (deg.)")
     plt.legend()
     plt.title(title)
+    plt.savefig("%s.png" %title, bbox_inches = "tight")
     plt.show()
 
 """
@@ -346,7 +347,7 @@ In order to activate a scenario, set its value below to True. If multiple scenar
 if __name__ == "__main__":
     #All scenarios set to false as default
     scenario1 = False
-    scenario2 = False
+    scenario2 = True
     scenario3 = False
     scenario4  = False
     T = 10000000 #Initial temperature
@@ -428,9 +429,12 @@ if __name__ == "__main__":
     carSpeed2 = 60 #mph
     carCost2 = 1 #dollars
 
-    iterationRange = np.array([10,100,1000,10000,100000])#,,1000000]) 
+    iterationRange = np.array([10,100,1000,10000,100000])#,1000000]) 
 
-    #There is significant computation needed past 10^6 iterations. As a result, that iteration number has been commented out.
+    #There is significant computation needed past 100000 iterations
+    # However, one can extend the iteration range if desired, 
+    # though temperature and rate will need to be increased in order to 
+    # prevent floating point error 
 
     #######################################################################################
 
@@ -464,7 +468,7 @@ if __name__ == "__main__":
     carSpeed4 = 70 #mph
     carCost4 = 3.0 #dollars
 
-    #Generating 10,000 random points within 10e6 by 10e6 box:
+    #Generating 10,000 random points within 1e5 by 1e5 box:
 
     squareSize = 10000
 
@@ -498,28 +502,32 @@ if __name__ == "__main__":
 
         #The following graphs plot the final optimal paths
 
-        pathGrapher(bestPath, "red", "Optimal Distance Path")
-        pathGrapher(bestTimePath, "green", "Optimal Time Path")
-        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")
+        pathGrapher(bestPath, "red", "Optimal Distance Path: Scenario 1")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path: Scenario 1")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path: Scenario 1")
 
         #The following graphs plot the best distance per iteration
 
         plt.plot(bestDistancePerIter)
         plt.xlabel("Iteration Count")
-        plt.ylabel("Total Cost (USD)")
-        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.ylabel("Total Distance (mi)")
+        plt.title("Simulated Annealing Distance Performance over Iteration: Scenario 1")
+        plt.savefig("cost iteration: scenario 1.png", bbox_inches = "tight")
         plt.show()
+        
 
         plt.plot(bestTimePerIter)
         plt.xlabel("Iteration Count")
         plt.ylabel("Total Time (Hr)")
-        plt.title("Simulated Annealing Time Performance over Iteration")
+        plt.title("Simulated Annealing Time Performance over Iteration: Scenario 1")
+        plt.savefig("time iteration: scenario 1.png", bbox_inches = "tight")
         plt.show()
 
         plt.plot(bestCostPerIter)
         plt.xlabel("Iteration Count")
         plt.ylabel("Total Cost (USD)")
-        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.title("Simulated Annealing Cost Performance over Iteration: Scenario 1")
+        plt.savefig("cost iteration: scenario 1.png", bbox_inches = "tight")
         plt.show()
 
         plt.plot(relPerformDist, label = "Distance")
@@ -527,8 +535,9 @@ if __name__ == "__main__":
         plt.plot(relPerformTime, label = "Time")
         plt.xlabel("Iteration Count")
         plt.ylabel("Relative Performance (%)")
-        plt.title("Relative Performance of Different Optimization Compared to Final Optimal Value")
+        plt.title("Relative Performance of Different Optimizations Compared to Final Optimal Value: Scenario 1")
         plt.legend()
+        plt.savefig("rel performance: scenario 1.png", bbox_inches = "tight")
         plt.show()        
     
     elif scenario2:
@@ -544,6 +553,7 @@ if __name__ == "__main__":
         plt.xlabel("Iteration Number")
         plt.ylabel("Best Distance (mi)")
         plt.title("Relationship between Best Distance and Iteration Number")
+        plt.savefig("iterationConvergence.png",bbox_inches = 'tight')
         plt.show()
 
     elif scenario3:
@@ -562,9 +572,9 @@ if __name__ == "__main__":
         print("Optimal Time:", bestTime, "Hr")
         print("Optimal Cost:", bestCost, "USD")
 
-        pathGrapher(bestPath, "red", "Optimal Distance Path")
-        pathGrapher(bestTimePath, "green", "Optimal Time Path")
-        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")   
+        pathGrapher(bestPath, "red", "Optimal Distance Path: Scenario 3")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path: Scenario 3")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path: Scenario 3")   
 
     elif scenario4:
         print("SIMULATION RUNNING")
@@ -587,28 +597,31 @@ if __name__ == "__main__":
 
         #The following graphs plot the final optimal paths
 
-        pathGrapher(bestPath, "red", "Optimal Distance Path")
-        pathGrapher(bestTimePath, "green", "Optimal Time Path")
-        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")
+        pathGrapher(bestPath, "red", "Optimal Distance Path: Scenario 4")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path: Scenario 4")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path: Scenario 4")
 
         #The following graphs plot the best distance per iteration
 
         plt.plot(bestDistancePerIter)
         plt.xlabel("Iteration Count")
-        plt.ylabel("Total Cost (USD)")
-        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.ylabel("Total Distance (mi)")
+        plt.title("Simulated Annealing Disance Performance over Iteration")
+        plt.savefig("distance iteration: scenario 4.png", bbox_inches = "tight")
         plt.show()
 
         plt.plot(bestTimePerIter)
         plt.xlabel("Iteration Count")
         plt.ylabel("Total Time (Hr)")
         plt.title("Simulated Annealing Time Performance over Iteration")
+        plt.savefig("time iteration: scenario 4.png", bbox_inches = "tight")
         plt.show()
 
         plt.plot(bestCostPerIter)
         plt.xlabel("Iteration Count")
         plt.ylabel("Total Cost (USD)")
         plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.savefig("cost iteration: scenario 4.png", bbox_inches = "tight")
         plt.show()
 
         plt.plot(relPerformDist, label = "Distance")
@@ -618,4 +631,5 @@ if __name__ == "__main__":
         plt.ylabel("Relative Performance (%)")
         plt.title("Relative Performance of Different Optimization Compared to Final Optimal Value")
         plt.legend()
+        plt.savefig("rel performance: scenario 4.png", bbox_inches = "tight")
         plt.show()

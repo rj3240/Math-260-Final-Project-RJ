@@ -23,7 +23,10 @@ Each scenario has its own set of parameters that can be separately adjusted per 
 1. If running scenario 4, ensure that the temperature is around 10000000, rate is around 0.995, and the iteration number is low (approx. 20000). Otherwise, the program will take a significantly long time to finish running.
 1. Generally, if one runs a higher iteration number, temperature or rate should also increase. This is to prevent any possibility of the temperature becoming so low that a floating point error emerges.
 
-Everytime a scenario runs, a matplotlib window will open and plot the results of the scenario. If you cannot see these results, a folder of all plots is provided in the github repository.
+Everytime a scenario runs, a matplotlib window will open and plot the results of the scenario. If you cannot see these results, a folder of all plots is provided in the github repository. If the user wants to access the full data set used for scenario 1, "us-state-capitals.csv" has all coordinate information. For this code, all coordinate data has been already loaded, so the program will still work even if there are issues with the repository and csv file.
 
 ### Citations:
 
+
+
+State capital data provided by Jasper Debie. https://github.com/jasperdebie/VisInfo/blob/master/us-state-capitals.csv
