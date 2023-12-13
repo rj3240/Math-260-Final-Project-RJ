@@ -1,3 +1,10 @@
+'''
+simAnnealingSalesmanOptimization.py
+Name: Ravi Jain
+netID: rj192
+Date Due: 12/13/2023
+'''
+
 import numpy as np
 import random
 import math
@@ -337,27 +344,27 @@ In order to activate a scenario, set its value below to True. If multiple scenar
 """
 
 if __name__ == "__main__":
-
-    scenario1 = True
-    scenario2 = True
+    #All scenarios set to false as default
+    scenario1 = False
+    scenario2 = False
     scenario3 = False
-
-    T = 10000
-    rate = 0.95
-    iterations = 2000
+    scenario4  = False
+    T = 10000000 #Initial temperature
+    rate = 0.995 #Temperature rate of change
+    iterations = 20000 #Number of iterations optimization will run through
 
     #######################################################################################
     #SCENARIO 1: Traveling Salesman State Capitals: Distance Optimization #################
     #######################################################################################
 
-    airSpeed = 600 #mph
-    airCriteria = 300 #maximum of 4 hour drive
-    airCost = 10.0 #dollars
-    carSpeed = 60 #mph
-    carCost = 1 #dollars
+    airSpeed1 = 600 #mph
+    airCriteria1 = 300 #maximum of 4 hour drive
+    airCost1 = 10.0 #dollars
+    carSpeed1 = 60 #mph
+    carCost1 = 1 #dollars
     
     #Latitude Longitude Points of all US State Capitals
-    data = np.array([
+    data1 = np.array([
     (32.377716, -86.300568),
     (58.301598, -134.420212),
     (33.448143, -112.096962),
@@ -415,13 +422,11 @@ if __name__ == "__main__":
     #SCENARIO 2: Testing Convergence Over Iterations ######################################
     #######################################################################################
 
-    T = 10000000
-    rate = 0.999
-    airSpeed1 = 600 #mph
-    airCriteria1 = 300 #maximum of 4 hour drive
-    airCost1 = 10.0 #dollars
-    carSpeed1 = 60 #mph
-    carCost1 = 1 #dollars
+    airSpeed2 = 600 #mph
+    airCriteria2 = 300 #maximum of 4 hour drive
+    airCost2 = 10.0 #dollars
+    carSpeed2 = 60 #mph
+    carCost2 = 1 #dollars
 
     iterationRange = np.array([10,100,1000,10000,100000])#,,1000000]) 
 
@@ -433,11 +438,11 @@ if __name__ == "__main__":
     #SCENARIO 3: Traveling In Circles #####################################################
     #######################################################################################
 
-    airSpeed = 500 #mph
-    airCriteria = 300 #maximum of 4 hour drive
-    airCost = 1 #dollars
-    carSpeed = 70 #mph
-    carCost = 3.0 #dollars
+    airSpeed3 = 500 #mph
+    airCriteria3 = 300 #maximum of 4 hour drive
+    airCost3 = 1 #dollars
+    carSpeed3 = 70 #mph
+    carCost3 = 3.0 #dollars
 
     radius = 1000
     points = 20 #Determines how many points will be on the circle.
@@ -445,18 +450,40 @@ if __name__ == "__main__":
     x = radius * np.cos(theta)
     y = radius * np.sin(theta)
     # Create the n by 2 array of points
-    data2 = np.array([x, y]).T
+    data3 = np.array([x, y]).T
 
     #######################################################################################
+
+    #######################################################################################
+    #SCENARIO 4: Traveling Salesman: Distance Optimization for 1000 Points #############
+    #######################################################################################
+
+    airSpeed4 = 500 #mph
+    airCriteria4 = 300 #maximum of 4 hour drive
+    airCost4 = 1 #dollars
+    carSpeed4 = 70 #mph
+    carCost4 = 3.0 #dollars
+
+    #Generating 10,000 random points within 10e6 by 10e6 box:
+
+    squareSize = 10000
+
+    # Number of random points to generate
+    n = 500
+
+    # Generate random points
+    data4 = np.array([(random.uniform(0, squareSize), random.uniform(0, squareSize)) for point in range(n)])
+
+    # Print the first 10 points as an example
 
     if scenario1:
 
         print("SIMULATION RUNNING")
 
         #Performing optimization based on distance, time, and cost
-        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "distance")
-        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "time")
-        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "cost")
+        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "distance")
+        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "time")
+        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data1,T,rate,iterations,airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "cost")
         
         #Calculating optimization performance per iteration relative to final best optimized values
         relPerformDist = bestDistance/bestDistancePerIter
@@ -509,7 +536,7 @@ if __name__ == "__main__":
         bestDistancesTotal = np.zeros(len(iterationRange))
         for i in range(0,len(iterationRange)):
             #Performing optimization based on distance
-            bestPath, bestDistance,bestDistancePerRun = annealOptimization(data,T,rate,iterationRange[i],airSpeed, airCriteria, airCost, carSpeed, carCost, "distance")
+            bestPath, bestDistance,bestDistancePerRun = annealOptimization(data1,T,rate,iterationRange[i],airSpeed1, airCriteria1, airCost1, carSpeed1, carCost1, "distance")
             bestDistancesTotal[i] = bestDistance
             print("N = %f Cycle Complete" %iterationRange[i])
         
@@ -525,9 +552,9 @@ if __name__ == "__main__":
 
         #Performing optimization based on distance, time, and cost
 
-        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "distance")
-        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "time")
-        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data,T,rate,iterations,airSpeed, airCriteria, airCost, carSpeed, carCost, "cost")
+        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data3,T,rate,iterations,airSpeed3, airCriteria3, airCost3, carSpeed3, carCost3, "distance")
+        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data3,T,rate,iterations,airSpeed3, airCriteria3, airCost3, carSpeed3, carCost3, "time")
+        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data3,T,rate,iterations,airSpeed3, airCriteria3, airCost3, carSpeed3, carCost3, "cost")
 
         print("SIMULATION RESULTS:")
 
@@ -538,3 +565,57 @@ if __name__ == "__main__":
         pathGrapher(bestPath, "red", "Optimal Distance Path")
         pathGrapher(bestTimePath, "green", "Optimal Time Path")
         pathGrapher(bestCostPath, "blue", "Optimal Cost Path")   
+
+    elif scenario4:
+        print("SIMULATION RUNNING")
+
+        #Performing optimization based on distance, time, and cost
+        bestPath, bestDistance,bestDistancePerIter = annealOptimization(data4,T,rate,iterations,airSpeed4, airCriteria4, airCost4, carSpeed4, carCost4, "distance")
+        bestTimePath, bestTime, bestTimePerIter = annealOptimization(data4,T,rate,iterations,airSpeed4, airCriteria4, airCost4, carSpeed4, carCost4, "time")
+        bestCostPath, bestCost, bestCostPerIter = annealOptimization(data4,T,rate,iterations,airSpeed4, airCriteria4, airCost4, carSpeed4, carCost4, "cost")
+        
+        #Calculating optimization performance per iteration relative to final best optimized values
+        relPerformDist = bestDistance/bestDistancePerIter
+        relPerformTime = bestTime/bestTimePerIter
+        relPerformCost = bestCost/bestCostPerIter
+
+        print("SIMULATION RESULTS:")
+
+        print("Optimal Distance:", bestDistance, "Miles")
+        print("Optimal Time:", bestTime, "Hr")
+        print("Optimal Cost:", bestCost, "USD")
+
+        #The following graphs plot the final optimal paths
+
+        pathGrapher(bestPath, "red", "Optimal Distance Path")
+        pathGrapher(bestTimePath, "green", "Optimal Time Path")
+        pathGrapher(bestCostPath, "blue", "Optimal Cost Path")
+
+        #The following graphs plot the best distance per iteration
+
+        plt.plot(bestDistancePerIter)
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Total Cost (USD)")
+        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.show()
+
+        plt.plot(bestTimePerIter)
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Total Time (Hr)")
+        plt.title("Simulated Annealing Time Performance over Iteration")
+        plt.show()
+
+        plt.plot(bestCostPerIter)
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Total Cost (USD)")
+        plt.title("Simulated Annealing Cost Performance over Iteration")
+        plt.show()
+
+        plt.plot(relPerformDist, label = "Distance")
+        plt.plot(relPerformCost, label = "Cost")
+        plt.plot(relPerformTime, label = "Time")
+        plt.xlabel("Iteration Count")
+        plt.ylabel("Relative Performance (%)")
+        plt.title("Relative Performance of Different Optimization Compared to Final Optimal Value")
+        plt.legend()
+        plt.show()
