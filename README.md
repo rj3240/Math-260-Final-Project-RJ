@@ -3,9 +3,9 @@
 
 ### Simulated Annealing: Introduction
 
-Simulated Annealing is an optimization method used to determine the global maximum or minimum of a data set. It differs from other optimization techniques such as gradient descent methods in its usage of a dynamically changing heat factor. Simulated Annealing mirrors the real life dynamics of annealing, where a metal is brought to high temperatures and slowly brought to a lower steady state temperature. When the system is initially unordered (temperature is very high), the optimization algorithm has a relatively high probability to accept a worse solution than the current best solution. As temperature decreases, the probability of accepting a worse solution approaches zero, and the system reaches equilibrium.
+Simulated Annealing is an optimization method used to determine the global maximum or minimum of a data set (). It differs from other optimization techniques such as gradient descent methods in its usage of a dynamically changing heat factor. Simulated Annealing mirrors the real life dynamics of annealing, where a metal is brought to high temperatures and slowly brought to a lower steady state temperature (Baird). When the system is initially unordered (temperature is very high), the optimization algorithm has a relatively high probability to accept a worse solution than the current best solution (Baird). As temperature decreases, the probability of accepting a worse solution approaches zero, and the system reaches equilibrium (Carr).
 
-While all optimization methods are prone to local extrema, the Simulated Annnealing method is unique in its iteration-dependent acceptance probabiltiies. Analagous to real annealing, the probability that the algorithm will choose a new solution is dependent on the temperature of the system. By allowing for different solutions to be accepted when the system temperature is high, the algorithm is able to unroot itself from any local extrema points. When tackling discrete problems with multiple peaks, Simulated Annealing's ability to escape local extrema becomes very useful. In comparison, an optimization method such as gradient descent would have much more trouble escaping a local extrema point due to its dependence on slope. Likewise, any form of hill climbing optimization would be trapped in a local extrema point—as the algorithm terminates once better neighbors aren't found, it has no way of discerning between global and local extrem and can be easily misled. 
+While all optimization methods are prone to local extrema, the Simulated Annnealing method is unique in its iteration-dependent acceptance probabiltiies. Analagous to real annealing, the probability that the algorithm will choose a new solution is dependent on the temperature of the system (Carr). By allowing for different solutions to be accepted when the system temperature is high, the algorithm is able to unroot itself from any local extrema points (Carr). When tackling discrete problems with multiple peaks, Simulated Annealing's ability to escape local extrema becomes very useful. In comparison, an optimization method such as gradient descent would have much more trouble escaping a local extrema point due to its dependence on slope. Likewise, any form of hill climbing optimization would be trapped in a local extrema point—as the algorithm terminates once better neighbors aren't found, it has no way of discerning between global and local extrem and can be easily misled. 
 
 ### Simulated Annealing: Discrete Problems and the Traveling Salesman 
 
@@ -27,6 +27,8 @@ Everytime a scenario runs, a matplotlib window will open and plot the results of
 
 ### Citations:
 
+Baird, Leemon. “Simulated Annealing.” Auton Project at CMU, www.cs.cmu.edu/afs/cs.cmu.edu/project/learn-43/lib/photoz/.g/web/glossary/anneal.html. Accessed 13 Dec. 2023. 
 
+Carr, Roger. "Simulated Annealing." From MathWorld--A Wolfram Web Resource, created by Eric W. Weisstein. https://mathworld.wolfram.com/SimulatedAnnealing.html. Accessed 13 Dec. 2023.
 
 State capital data provided by Jasper Debie. https://github.com/jasperdebie/VisInfo/blob/master/us-state-capitals.csv
