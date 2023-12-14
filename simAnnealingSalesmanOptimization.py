@@ -338,7 +338,13 @@ This scenario considers travel across a circle. Starting from a random point alo
 are generated and plotted along with the exact order of cities, and the total distance, time, and cost are printed. All important outputs, 
 such as total distance, time, and cost are also printed. Compared to SCENARIO 1, SCENARIO 3 exaggerates the effect of which quantity is best optimized,
 which is illustrated by the distinct changes in optimal path. 
------
+
+SCENARIO 4: City Traveling
+
+This scenario considers travel across random points in a square. Starting from a random city and given different initial parameters,
+paths that optimize distance, time, and cost are generated and plotted. All important outputs, such as total distance, time, and cost are also printed. 
+Graphs of best distance, time, and cost per iterations are also plotted. The last graph plotted is the relative optimiization performance of 
+each iteration compared to the final best distance, time, and cost.
 
 In order to activate a scenario, set its value below to True. If multiple scenarios are set at the same time, only the topmost one will run.
 
